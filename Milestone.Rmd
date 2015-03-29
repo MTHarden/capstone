@@ -1,36 +1,71 @@
-setwd("~/R/capstone/data/en_US")
+---
+title: "Milestone"
+author: "Mitch Harden"
+date: "03/27/2015"
+output: pdf_document
+---
+
+The goal of this report is briefly explain the major features of the data and to concisely summarize plans for creating a prediction algorhythm and shiny app. 
 
 
+Load Libraries
+
+```{r}
 library(NLP)
 library(RColorBrewer)
 library(stringi)
 library(tm)
 library(wordcloud)
+```
 
-## Load data
+Read the data
+
+```{r}
+#Load data
 blogs = readLines("en_US.blogs.txt")
 news = readLines("en_US.news.txt")
 twitter = readLines("en_US.twitter.txt")
+```
 
-## Blogs basic info
+Data Exploration
+----------------
+
+A quick look at the scope of this data reveals that it is too large to work with directly. A sample from each of the three data files is generated to use during this exploratory analysis.
+
+Determine the size of Blogs data file
+```{r, eval=FALSE }
 length(blogs)
+[1] 899288
 object.size(blogs)
+260564320 bytes
+```
 
-## News basic info
+Determine the size of News data file
+```{r, eval=FALSE }
 length(news)
+[1] 1010242
 object.size(news)
+20111392 bytes
+```
 
-## Twitter basic info
-length(twitter)
-object.size(twitter)          
+Determine the size of Twitter data file
+```{r, eval=FALSE }
+length(tweets)
+[1] 2360148
+object.size(tweets)
+316037344 bytes
+```
 
-##Sampling the Data 
+Create Samples of all three data files
+```{r}
 set.seed(12345) # Just like my luggage
 blogSample = sample(blogs, 1000)
 newsSample = sample(news, 1000)
 twitterSample = sample(twitter, 1000)
+```
 
-
+Now that the data files are more manageable they can be manipulated to explore word frequency
+```{r}
 ## Blogs advanced
 ## Join the elements of a character vector into one string
 blogString <- stri_flatten(blogSample, collapse =" ")
@@ -77,22 +112,40 @@ utwordsNum
 blogCorpus = Corpus(VectorSource(blogWords))
 newsCorpus = Corpus(VectorSource(newsWords))
 twitterCorpus = Corpus(VectorSource(twitterWords))
+```
 
-## Visualizing with Word Clouds
-##Blogs
+Visual Representation of Text Data
+----------------------------------
+
+A wordcloud is a quick and easy way to visualize the importance and frequency of words.
+
+**BLOGS WORD CLOUD**
+
+```{r blogCorpus, echo=TRUE, warning=FALSE, message=FALSE, fig.align='left'}
 wordcloud(blogCorpus, scale=c(3,0.5),
           min.freq=5, max.words=150, random.order=TRUE,
           rot.per=0.5, use.r.layout=FALSE,
           colors=brewer.pal(8, "Dark2"))
+```
 
-##News
+**NEWS WORD CLOUD**
+
+```{r newsCorpus, echo=TRUE, warning=FALSE, message=FALSE, fig.align='left'}
 wordcloud(newsCorpus, scale=c(3,0.5),
           min.freq=5, max.words=150, random.order=TRUE,
           rot.per=0.5, use.r.layout=FALSE,
           colors=brewer.pal(8, "Dark2"))
+```
 
-##Twitter
+**TWITTER WORD CLOUD**
+
+```{r twitterCorpus, echo=TRUE, warning=FALSE, message=FALSE, fig.align='left'}
 wordcloud(twitterCorpus, scale=c(3,0.5),
           min.freq=5, max.words=150, random.order=TRUE,
           rot.per=0.5, use.r.layout=FALSE,
           colors=brewer.pal(8, "Dark2"))
+```
+
+Conclusions and Next Steps
+-----------
+Twitter has fewer unique words than blogs. Next I will have to learn how to do the N-gram thing. Split the data up so I can start creating, refining and testing prediction models, and create a shiny app for presentation.
